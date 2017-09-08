@@ -2,7 +2,7 @@
 #include <tuple>
 #include <vector>
 
-#include "AdjacencyMatrix.h"
+#include "CombinationGraph.h"
 #include "Matcher.h"
 #include "Graph.h"
 
@@ -13,8 +13,8 @@ int main(int argc, char **argv) {
     return 0;
   }
 
-  AdjacencyMatrix graph1(argv[1]);
-  AdjacencyMatrix graph2(argv[2]);
+  CombinationGraph graph1(argv[1]);
+  CombinationGraph graph2(argv[2]);
 
   Graph &G1 = graph1;
   Graph &G2 = graph2;

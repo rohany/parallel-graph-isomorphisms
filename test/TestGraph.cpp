@@ -2,7 +2,7 @@
 #include <assert.h>
 #include <vector>
 
-#include "AdjacencyMatrix.h"
+#include "CombinationGraph.h"
 
 int main(int argc, char **argv) {
 
@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
     std::cout << "Please supply a file name" << std::endl;
     return 0;
   }
-  AdjacencyMatrix graph = AdjacencyMatrix(argv[1]);
+  CombinationGraph graph = CombinationGraph(argv[1]);
   Graph &G1 = graph;
   G1.printGraph();
 

@@ -3,11 +3,11 @@ COMPILER = g++
 CXXFLAGS = -Iinclude $(COMPILEFLAGS)
 OPTFLAGS = -O1
 
-ADJMATRIX = objs/AdjacencyMatrix.o
+COMBGRAPH = objs/CombinationGraph.o
 
-OBJS = objs/AdjacencyMatrix.o objs/State.o objs/Matcher.o
+OBJS = objs/CombinationGraph.o objs/State.o objs/Matcher.o
 
-TESTS = test-adj-matrix
+TESTS = test-comb-graph
 
 all: objs tests matcher
 
@@ -18,10 +18,10 @@ objs: $(OBJS)
 
 tests: $(TESTS)
 
-test-adj-matrix: $(ADJMATRIX) test/TestGraph.cpp
-	$(COMPILER) $(OPTFLAGS) $(CXXFLAGS) test/TestGraph.cpp $(ADJMATRIX) -o adj-matrix-test.run
+test-comb-graph: $(COMBGRAPH) test/TestGraph.cpp
+	$(COMPILER) $(OPTFLAGS) $(CXXFLAGS) test/TestGraph.cpp $(COMBGRAPH) -o comb-graph.run
 
-objs/AdjacencyMatrix.o: src/AdjacencyMatrix.cpp include/AdjacencyMatrix.h \
+objs/CombinationGraph.o: src/CombinationGraph.cpp include/CombinationGraph.h \
 												include/Graph.h
 	$(COMPILER) $(OPTFLAGS) -c $< $(CXXFLAGS) -o $@
 
