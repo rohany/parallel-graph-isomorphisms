@@ -1,0 +1,21 @@
+Beginning work on implementation of parallel graph isomorphisms.
+
+Current work so far is just setting up the code needed to run
+a serial version of the VF2 algorithm.
+
+Style Guidelines : File names should begin with capital letters,
+and each file name should be the name of the class that is being
+either defined or implemented in the file. For in file style,
+follow clang-format.
+
+Journal :
+
+9/8/2017 : Added more C++ source files, fully implemented and
+test an adjacency matrix graph structure. Graph structure has
+alot of room available for optimization, which is noted in the class.
+Implemented skeleton code for State and Matcher classes.
+
+9/7/2017 : Created directory. Began defining header files for classes
+like Graph, State and Matcher, as well as sketching out some ideas
+for representing the graph in a way that will condusive to implementing
+the VF2 algorithm first serially, then in parallel.
