@@ -14,6 +14,7 @@
  * For simplicities sake while testing,
  * use the following graph format :
  *
+ * nodes are from 0 to n-1
  * numNodes
  * node1 node2 #this is an edge
  * i j
@@ -82,11 +83,11 @@ void CombinationGraph::addEdge(int i, int j) {
 bool CombinationGraph::isEdge(int i, int j) { return _outNeighbors[i][j]; }
 
 std::vector<int> &CombinationGraph::getPredecessors(int i) {
-  return _inNeighbors[i];
+  return _adjListIn[i];
 }
 
 std::vector<int> &CombinationGraph::getSuccessors(int i) {
-  return _outNeighbors[i];
+  return _adjListOut[i];
 }
 
 int CombinationGraph::getNumNodes() { return _numNodes; }

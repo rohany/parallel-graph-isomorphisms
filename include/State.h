@@ -21,7 +21,10 @@ public:
   // This means that we map vertex n in G1 to m in G2
   void addPair(int n, int m);
 
+  bool checkMatch();
+
 private:
+  int currentlyMatched;
   Graph &_G1;
   Graph &_G2;
   std::vector<int> core_1;

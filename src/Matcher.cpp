@@ -10,6 +10,11 @@ Matcher::Matcher(Graph &G1, Graph &G2) : _G1(G1), _G2(G2) {
 }
 
 std::pair<bool, std::vector<int> > Matcher::match() {
+
+  if (_G1.getNumNodes() != _G2.getNumNodes()) {
+    return std::pair<bool, std::vector<int> >(false, {});
+  }
+
   return std::pair<bool, std::vector<int> >(false, {});
 }
 
