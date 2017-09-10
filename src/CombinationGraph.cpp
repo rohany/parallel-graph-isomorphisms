@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 #include "Graph.h"
 #include "CombinationGraph.h"
@@ -41,6 +42,12 @@ CombinationGraph::CombinationGraph(std::string filename) {
   int i, j;
   while (infile >> i >> j) {
     addEdge(i, j);
+  }
+
+  // not sure if this is necessary
+  for (int i = 0; i < _numNodes; i++) {
+    std::sort(_adjListIn[i].begin(), _adjListIn[i].end());
+    std::sort(_adjListOut[i].begin(), _adjListOut[i].end());
   }
 }
 

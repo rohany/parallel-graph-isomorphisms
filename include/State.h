@@ -21,12 +21,14 @@ public:
   // This means that we map vertex n in G1 to m in G2
   void addPair(int n, int m);
 
+  std::vector<int> getMapping();
+
   bool checkMatch();
 
 private:
-  int currentlyMatched;
   Graph &_G1;
   Graph &_G2;
+  int currentlyMatched;
   std::vector<int> core_1;
   std::vector<int> core_2;
   std::vector<int> in_1;
@@ -34,6 +36,4 @@ private:
   std::vector<int> out_1;
   std::vector<int> out_2;
   int NULL_NODE = -1;
-
-  // need the ins, outs?
 };

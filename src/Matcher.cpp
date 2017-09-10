@@ -5,9 +5,7 @@
 #include "Graph.h"
 #include "State.h"
 
-Matcher::Matcher(Graph &G1, Graph &G2) : _G1(G1), _G2(G2) {
-  // placeholder
-}
+Matcher::Matcher(Graph &G1, Graph &G2) : _G1(G1), _G2(G2), startState(G1, G2) {}
 
 std::pair<bool, std::vector<int> > Matcher::match() {
 
@@ -15,19 +13,27 @@ std::pair<bool, std::vector<int> > Matcher::match() {
     return std::pair<bool, std::vector<int> >(false, {});
   }
 
-  return std::pair<bool, std::vector<int> >(false, {});
+  return rec_match(startState);
 }
 
-bool Matcher::rec_match(State s) {
-  (void)s;
+std::pair<bool, std::vector<int> > Matcher::rec_match(State s) {
 
-  // if state matching covers graph return true
+  if (s.checkMatch()) {
+    return std::pair<bool, std::vector<int> >(true, s.getMapping());
+  }
 
-  // else generate all generate all candidate pairs from
-  // the state
+  auto candidatePairs = s.generateCandidatePairs();
 
-  // for each possible pair - add pair to state, run rec_match
+  // parallel for
+  for (auto &p : candidatePairs) {
+    s.addPair(p.first, p.second);
 
-  // return or of all the results - need the result from the state?
-  return false;
+    auto res = rec_match(s);
+    if (res.first) {
+      return res;
+    }
+    // restore data structure??
+  }
+
+  return std::pair<int, std::vector<int> >(false, {});
 }

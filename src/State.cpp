@@ -1,5 +1,6 @@
 #include <tuple>
 #include <vector>
+#include <algorithm>
 
 #include "State.h"
 #include "Graph.h"
@@ -25,12 +26,40 @@ bool State::checkMatch() {
     return false;
   }
 
-  // matcher code
-
+  // Can be a pfor
   for (int i = 0; i < _G1.getNumNodes(); i++) {
-    // wei
+    auto n1 = _G1.getPredecessors(i);
+    auto n2 = _G2.getPredecessors(core_1[i]);
+
+    if (n1.size() != n2.size()) {
+      return false;
+    }
+
+    for (int j = 0; j < (int)n1.size(); j++) {
+      int v = core_1[n1[j]];
+      if (!std::binary_search(n2.begin(), n2.end(), v)) {
+        return false;
+      }
+    }
+
+    n1 = _G1.getSuccessors(i);
+    n2 = _G2.getSuccessors(core_1[i]);
+
+    if (n1.size() != n2.size()) {
+      return false;
+    }
+
+    for (int j = 0; j < (int)n1.size(); j++) {
+      int v = core_1[n1[j]];
+      if (std::binary_search(n2.begin(), n2.end(), v)) {
+        return false;
+      }
+    }
   }
+  return true;
 }
+
+std::vector<int> State::getMapping() { return core_1; }
 
 // maybe need to hold state level?
 void State::addPair(int n, int m) {

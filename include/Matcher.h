@@ -25,8 +25,9 @@ public:
 private:
   // recursive matcher
   // TODO: decide whether a reference or copy is best here
-  bool rec_match(State s);
+  std::pair<bool, std::vector<int> > rec_match(State s);
 
   Graph &_G1;
   Graph &_G2;
+  State startState;
 };
