@@ -10,6 +10,17 @@ follow clang-format.
 
 Journal :
 
+9/10/2017 : Filled in more code in Matcher, State. Need to
+implement generate candidate pairs and flesh out some
+logistics in Matcher, and then can start testing the
+sequential code.
+
+9/9/2017 : Added extra data to Graph, changed it to store
+both an Adjacency List and an Adjacency Matrix - want fast
+edge lookups, and cheap neighbors iteration as well. Since
+we allocate this upfront, and its read only, I think it will
+be fine.
+
 9/8/2017 : Added more C++ source files, fully implemented and
 test an adjacency matrix graph structure. Graph structure has
 alot of room available for optimization, which is noted in the class.
