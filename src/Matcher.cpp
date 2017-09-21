@@ -40,7 +40,6 @@ std::pair<bool, std::vector<int>> Matcher::rec_match(State s, int depth)
     }
 
     s.removePair(p.first, p.second, depth);
-    // restore data structure??
   }
 
   return std::pair<bool, std::vector<int>>(false, {});

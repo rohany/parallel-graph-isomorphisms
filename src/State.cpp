@@ -69,7 +69,7 @@ bool State::r_succ(int n, int m)
   for (int i = 0; i < _G1.getNumNodes(); i++)
   {
     int n_prime = core_1[i];
-    if (n_prime != NULL_NODE && _G1.isEdge(i, n))
+    if (n_prime != NULL_NODE && _G1.isEdge(n, i))
     {
       // show there is an m' in pred of M that it works
       auto m_succs = _G2.getSuccessors(m);
@@ -88,7 +88,7 @@ bool State::r_succ(int n, int m)
   for (int i = 0; i < _G2.getNumNodes(); i++)
   {
     int m_prime = core_2[i];
-    if (m_prime != NULL_NODE && _G2.isEdge(i, m))
+    if (m_prime != NULL_NODE && _G2.isEdge(m, i))
     {
       // show there is an m' in pred of M that it works
       auto n_succs = _G1.getSuccessors(n);
@@ -103,7 +103,6 @@ bool State::r_succ(int n, int m)
       second_and &= found;
     }
   }
-  printf("%d %d returned %s\n", n, m, (first_and && second_and) ? "true" : "false");
   return first_and && second_and;
 }
 bool State::r_in(int n, int m)
@@ -292,12 +291,6 @@ std::vector<std::pair<int, int>> State::generateUnfilteredPairs()
 
   if (result.size() != 0)
   {
-    printf(" possible pairs before extra {");
-    for (auto i : result)
-    {
-      printf("(%d, %d)", i.first, i.second);
-    }
-    printf("}\n");
     return result;
   }
 
@@ -313,12 +306,6 @@ std::vector<std::pair<int, int>> State::generateUnfilteredPairs()
       }
     }
   }
-  printf("Possible pairs after extra {");
-  for (auto i : result)
-  {
-    printf("(%d, %d)", i.first, i.second);
-  }
-  printf("}\n");
 
   return result;
 }
@@ -333,12 +320,6 @@ std::vector<std::pair<int, int>> State::generateCandidatePairs()
   });
   // filtered array
   possiblePairs.erase(filtered, possiblePairs.end());
-  printf("Possible pairs {");
-  for (auto i : possiblePairs)
-  {
-    printf("(%d, %d)", i.first, i.second);
-  }
-  printf("}\n");
   return possiblePairs;
 }
 
@@ -369,6 +350,7 @@ bool State::checkMatch()
       }
     }
 
+
     n1 = _G1.getSuccessors(i);
     n2 = _G2.getSuccessors(core_1[i]);
 
@@ -380,7 +362,7 @@ bool State::checkMatch()
     for (int j = 0; j < (int)n1.size(); j++)
     {
       int v = core_1[n1[j]];
-      if (std::binary_search(n2.begin(), n2.end(), v))
+      if (!std::binary_search(n2.begin(), n2.end(), v))
       {
         return false;
       }
@@ -401,6 +383,7 @@ void State::addPair(int n, int m, int depth)
   in_2[m] = depth;
   out_1[n] = depth;
   out_2[m] = depth;
+  currentlyMatched++;
 
   /*
    * Add logic for updating in and out sets
@@ -450,6 +433,7 @@ void State::removePair(int n, int m, int depth)
 
   core_1[n] = NULL_NODE;
   core_2[m] = NULL_NODE;
+  currentlyMatched--;
 
   if (in_1[n] == depth)
   {
