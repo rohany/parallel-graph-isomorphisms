@@ -8,24 +8,35 @@
  * A class to keep track of the state in the VF2 algorithm.
  */
 
-class State {
+class State
+{
 
 public:
   // Maybe need to change the parameters here
   State(Graph &G1, Graph &G2);
 
   // Generate possible pairs
-  std::vector<std::pair<int, int> > generateCandidatePairs();
+  std::vector<std::pair<int, int>> generateCandidatePairs();
 
   // Add a pair to te current state
   // This means that we map vertex n in G1 to m in G2
-  void addPair(int n, int m);
+  void addPair(int n, int m, int depth);
+
+  void removePair(int i, int m, int depth);
 
   std::vector<int> getMapping();
 
   bool checkMatch();
 
 private:
+  std::vector<std::pair<int, int>> generateUnfilteredPairs();
+  bool r_pred(int n, int m);
+  bool r_succ(int n, int m);
+  bool r_in(int n, int m);
+  bool r_out(int n, int m);
+  bool r_new(int n, int m);
+  bool F_pred(int n, int m);
+
   Graph &_G1;
   Graph &_G2;
   int currentlyMatched;
