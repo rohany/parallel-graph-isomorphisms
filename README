@@ -10,6 +10,10 @@ follow clang-format.
 
 Journal :
 
+9/25/2017 : Changed to stack idea with extra data - works.
+
+9/20/2017 : Finished serial matcher, and it works!
+
 9/10/2017 : Filled in more code in Matcher, State. Need to
 implement generate candidate pairs and flesh out some
 logistics in Matcher, and then can start testing the

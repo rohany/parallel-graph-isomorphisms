@@ -10,8 +10,8 @@ State::State(Graph &G1, Graph &G2) : _G1(G1), _G2(G2), currentlyMatched(0)
   // Either want to allocate these in parallel, or
   // allow match to take in a starting state to push
   // off the time of allocation for these
-  core_1 = std::vector<int>(_G1.getNumNodes(), NULL_NODE);
-  core_2 = std::vector<int>(_G2.getNumNodes(), NULL_NODE);
+  core_1 = std::vector<std::pair<int, int>>(_G1.getNumNodes(), std::pair<int, int>(NULL_NODE, 0));
+  core_2 = std::vector<std::pair<int, int>>(_G2.getNumNodes(), std::pair<int, int>(NULL_NODE, 0));
   in_1 = std::vector<int>(_G1.getNumNodes(), NULL_NODE);
   in_2 = std::vector<int>(_G1.getNumNodes(), NULL_NODE);
   out_1 = std::vector<int>(_G1.getNumNodes(), NULL_NODE);
@@ -24,7 +24,7 @@ bool State::r_pred(int n, int m)
   bool first_and = true;
   for (int i = 0; i < _G1.getNumNodes(); i++)
   {
-    int n_prime = core_1[i];
+    int n_prime = core_1[i].first;
     if (n_prime != NULL_NODE && _G1.isEdge(i, n))
     {
       // show there is an m' in pred of M that it works
@@ -43,7 +43,7 @@ bool State::r_pred(int n, int m)
   bool second_and = true;
   for (int i = 0; i < _G2.getNumNodes(); i++)
   {
-    int m_prime = core_2[i];
+    int m_prime = core_2[i].first;
     if (m_prime != NULL_NODE && _G2.isEdge(i, m))
     {
       // show there is an m' in pred of M that it works
@@ -68,7 +68,7 @@ bool State::r_succ(int n, int m)
   bool first_and = true;
   for (int i = 0; i < _G1.getNumNodes(); i++)
   {
-    int n_prime = core_1[i];
+    int n_prime = core_1[i].first;
     if (n_prime != NULL_NODE && _G1.isEdge(n, i))
     {
       // show there is an m' in pred of M that it works
@@ -87,7 +87,7 @@ bool State::r_succ(int n, int m)
   bool second_and = true;
   for (int i = 0; i < _G2.getNumNodes(); i++)
   {
-    int m_prime = core_2[i];
+    int m_prime = core_2[i].first;
     if (m_prime != NULL_NODE && _G2.isEdge(m, i))
     {
       // show there is an m' in pred of M that it works
@@ -280,8 +280,8 @@ std::vector<std::pair<int, int>> State::generateUnfilteredPairs()
   {
     for (int j = 0; j < _G2.getNumNodes(); j++)
     {
-      if ((in_1[i] != NULL_NODE || out_1[i] != NULL_NODE) && core_1[i] == NULL_NODE &&
-          (in_2[j] != NULL_NODE || out_2[j] != NULL_NODE) && core_2[j] == NULL_NODE)
+      if ((in_1[i] != NULL_NODE || out_1[i] != NULL_NODE) && core_1[i].first == NULL_NODE &&
+          (in_2[j] != NULL_NODE || out_2[j] != NULL_NODE) && core_2[j].first == NULL_NODE)
       {
         result.push_back(std::pair<int, int>(i, j));
         break;
@@ -299,7 +299,7 @@ std::vector<std::pair<int, int>> State::generateUnfilteredPairs()
   {
     for (int j = 0; j < _G2.getNumNodes(); j++)
     {
-      if (core_1[i] == NULL_NODE && core_2[j] == NULL_NODE)
+      if (core_1[i].first == NULL_NODE && core_2[j].first == NULL_NODE)
       {
         result.push_back(std::pair<int, int>(i, j));
         break;
@@ -323,8 +323,48 @@ std::vector<std::pair<int, int>> State::generateCandidatePairs()
   return possiblePairs;
 }
 
+std::vector<std::tuple<int, int, int>> State::generateCandidatePairsAtDepth(int d) {
+  auto mid = generateCandidatePairs();
+  std::vector<std::tuple<int, int, int>> res;
+
+  for(auto i : mid){
+    res.push_back(std::tuple<int, int, int>(i.first, i.second, d));
+  }
+
+  return res;
+}
+
+void State::restoreStateToDepth(int d){
+
+  depth = d;
+
+  for(int i = 0;i < _G1.getNumNodes();i++){
+    if(in_1[i] >= d){
+      in_1[i] = NULL_NODE;
+    }
+    if(in_2[i] >= d){
+      in_2[i] = NULL_NODE;
+    }
+    if(out_1[i] >= d){
+      out_1[i] = NULL_NODE;
+    }
+    if(out_2[i] >= d){
+      out_2[i] = NULL_NODE;
+    }
+    if(core_1[i].first != NULL_NODE && core_1[i].second >= d){
+      core_1[i] = std::pair<int, int>(NULL_NODE, d);
+      currentlyMatched--;
+    }
+    if(core_2[i].first != NULL_NODE && core_2[i].second >= d){
+      core_2[i] = std::pair<int, int>(NULL_NODE, d);
+    }
+  }
+}
+
+
 bool State::checkMatch()
 {
+
   if (currentlyMatched != _G1.getNumNodes())
   {
     return false;
@@ -334,7 +374,7 @@ bool State::checkMatch()
   for (int i = 0; i < _G1.getNumNodes(); i++)
   {
     auto n1 = _G1.getPredecessors(i);
-    auto n2 = _G2.getPredecessors(core_1[i]);
+    auto n2 = _G2.getPredecessors(core_1[i].first);
 
     if (n1.size() != n2.size())
     {
@@ -343,7 +383,7 @@ bool State::checkMatch()
 
     for (int j = 0; j < (int)n1.size(); j++)
     {
-      int v = core_1[n1[j]];
+      int v = core_1[n1[j]].first;
       if (!std::binary_search(n2.begin(), n2.end(), v))
       {
         return false;
@@ -352,7 +392,7 @@ bool State::checkMatch()
 
 
     n1 = _G1.getSuccessors(i);
-    n2 = _G2.getSuccessors(core_1[i]);
+    n2 = _G2.getSuccessors(core_1[i].first);
 
     if (n1.size() != n2.size())
     {
@@ -361,7 +401,7 @@ bool State::checkMatch()
 
     for (int j = 0; j < (int)n1.size(); j++)
     {
-      int v = core_1[n1[j]];
+      int v = core_1[n1[j]].first;
       if (!std::binary_search(n2.begin(), n2.end(), v))
       {
         return false;
@@ -371,19 +411,27 @@ bool State::checkMatch()
   return true;
 }
 
-std::vector<int> State::getMapping() { return core_1; }
+std::vector<int> State::getMapping() {
 
-void State::addPair(int n, int m, int depth)
+  std::vector<int> res;
+  for(auto i : core_1){
+    res.push_back(i.first);
+  }
+  return res;
+}
+
+//TODO: figure out depth interaction with this code
+void State::addPair(int n, int m, int d)
 {
-  core_1[n] = m;
-  core_2[m] = n;
+  core_1[n] = std::pair<int, int>(m, d);
+  core_2[m] = std::pair<int, int>(n, d);
 
-  // REPLACE THIS LATER WITH LEVEL OF SEARCH
-  in_1[n] = depth;
-  in_2[m] = depth;
-  out_1[n] = depth;
-  out_2[m] = depth;
+  in_1[n] = d;
+  in_2[m] = d;
+  out_1[n] = d;
+  out_2[m] = d;
   currentlyMatched++;
+  depth = d;
 
   /*
    * Add logic for updating in and out sets
@@ -395,7 +443,7 @@ void State::addPair(int n, int m, int depth)
     // check if level exists first
     if (in_1[i] == NULL_NODE)
     {
-      in_1[i] = depth;
+      in_1[i] = d;
     }
   }
 
@@ -404,7 +452,7 @@ void State::addPair(int n, int m, int depth)
     // same as above
     if (out_1[i] == NULL_NODE)
     {
-      out_1[i] = depth;
+      out_1[i] = d;
     }
   }
 
@@ -414,7 +462,7 @@ void State::addPair(int n, int m, int depth)
     // check if level exists first
     if (in_2[i] == NULL_NODE)
     {
-      in_2[i] = depth;
+      in_2[i] = d;
     }
   }
 
@@ -423,7 +471,7 @@ void State::addPair(int n, int m, int depth)
     // same as above
     if (out_2[i] == NULL_NODE)
     {
-      out_2[i] = depth;
+      out_2[i] = d;
     }
   }
 }
@@ -431,8 +479,9 @@ void State::addPair(int n, int m, int depth)
 void State::removePair(int n, int m, int depth)
 {
 
-  core_1[n] = NULL_NODE;
-  core_2[m] = NULL_NODE;
+  // depth interaction here?
+  core_1[n] = std::pair<int, int>(NULL_NODE, 0);
+  core_2[m] = std::pair<int, int>(NULL_NODE, 0);
   currentlyMatched--;
 
   if (in_1[n] == depth)

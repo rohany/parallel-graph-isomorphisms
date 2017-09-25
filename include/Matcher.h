@@ -23,10 +23,14 @@ public:
   // of NONE
   std::pair<bool, std::vector<int>> match();
 
+
 private:
   // recursive matcher
   // TODO: decide whether a reference or copy is best here
   std::pair<bool, std::vector<int>> rec_match(State s, int depth);
+
+  // matches using a stack instead of recursion to test new idea
+  std::pair<bool, std::vector<int>> stack_match();
 
   Graph &_G1;
   Graph &_G2;

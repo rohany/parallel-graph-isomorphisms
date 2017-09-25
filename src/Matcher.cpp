@@ -1,5 +1,6 @@
 #include <tuple>
 #include <vector>
+#include <stack>
 
 #include "Matcher.h"
 #include "Graph.h"
@@ -15,7 +16,8 @@ std::pair<bool, std::vector<int>> Matcher::match()
     return std::pair<bool, std::vector<int>>(false, {});
   }
 
-  return rec_match(startState, 0);
+  // return rec_match(startState, 0);
+  return stack_match();
 }
 
 std::pair<bool, std::vector<int>> Matcher::rec_match(State s, int depth)
@@ -43,4 +45,46 @@ std::pair<bool, std::vector<int>> Matcher::rec_match(State s, int depth)
   }
 
   return std::pair<bool, std::vector<int>>(false, {});
+}
+
+std::pair<bool, std::vector<int>> Matcher::stack_match(){
+
+  std::stack<std::tuple<int, int, int> > frontier;
+  auto starting_states = startState.generateCandidatePairsAtDepth(1);
+
+  for(auto i : starting_states){
+    frontier.push(i);
+  }
+
+  while(!frontier.empty()){
+
+    if (startState.checkMatch())
+    {
+      return std::pair<bool, std::vector<int>>(true, startState.getMapping());
+    }
+    int n, m, d;
+    std::tie(n, m, d) = frontier.top();
+    frontier.pop();
+
+
+    int curDepth = startState.getDepth();
+    if(curDepth <= d){
+      startState.restoreStateToDepth(d);
+    }
+    startState.addPair(n, m, d);
+
+    auto new_pairs = startState.generateCandidatePairsAtDepth(d + 1);
+
+    for(auto i : new_pairs){
+      frontier.push(i);
+    }
+
+  }
+
+  if (startState.checkMatch())
+  {
+    return std::pair<bool, std::vector<int>>(true, startState.getMapping());
+  }
+  return std::pair<bool, std::vector<int>>(false, {});
+
 }

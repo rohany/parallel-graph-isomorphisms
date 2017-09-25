@@ -1,0 +1,13 @@
+use the dfs parallel scheduler
+
+frontier = generatePossiblePairs, depth?
+
+when we get a work request, we copy our state, and give them the frontier? -
+need to make sure they get at the right level? add next levels to a second frontier?
+
+
+extend pasl while with this steal function
+
+optimization ideas:
+use restrict when you know the pointers are different - allows for optimization
+
