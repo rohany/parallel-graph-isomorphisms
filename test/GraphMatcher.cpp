@@ -6,11 +6,9 @@
 #include "Matcher.h"
 #include "Graph.h"
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 
-  if (argc < 3)
-  {
+  if (argc < 3) {
     std::cout << "Please submit two graph files for matching!" << std::endl;
     return 0;
   }

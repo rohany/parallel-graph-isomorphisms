@@ -8,17 +8,16 @@
  * A class to keep track of the state in the VF2 algorithm.
  */
 
-class State
-{
+class State {
 
 public:
   // Maybe need to change the parameters here
   State(Graph &G1, Graph &G2);
 
   // Generate possible pairs
-  std::vector<std::pair<int, int>> generateCandidatePairs();
+  std::vector<std::pair<int, int> > generateCandidatePairs();
 
-  std::vector<std::tuple<int, int, int>> generateCandidatePairsAtDepth(int d);
+  std::vector<std::tuple<int, int, int> > generateCandidatePairsAtDepth(int d);
 
   // Add a pair to te current state
   // This means that we map vertex n in G1 to m in G2
@@ -32,12 +31,10 @@ public:
 
   bool checkMatch();
 
-  int getDepth() {
-    return depth;
-  }
+  int getDepth() { return depth; }
 
 private:
-  std::vector<std::pair<int, int>> generateUnfilteredPairs();
+  std::vector<std::pair<int, int> > generateUnfilteredPairs();
   bool r_pred(int n, int m);
   bool r_succ(int n, int m);
   bool r_in(int n, int m);
@@ -48,8 +45,8 @@ private:
   Graph &_G1;
   Graph &_G2;
   int currentlyMatched;
-  std::vector<std::pair<int, int>> core_1;
-  std::vector<std::pair<int, int>> core_2;
+  std::vector<std::pair<int, int> > core_1;
+  std::vector<std::pair<int, int> > core_2;
   std::vector<int> in_1;
   std::vector<int> in_2;
   std::vector<int> out_1;
